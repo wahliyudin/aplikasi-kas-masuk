@@ -8,19 +8,20 @@
                     <!-- /.card-header -->
                     <div class="card-body">
                         <div class="row">
+                            <input type="hidden" name="cash_in_id" value="{{ Crypt::encrypt($cash_in->id) }}" id="cash_in_id">
                             <div class="form-group col-6">
                                 <label>Akun Kas</label>
                                 <select name="account_id_single" id="account_id_single" class="form-control select2"
                                     style="width: 100%;">
                                     <option selected="selected" disabled>-- pilih --</option>
                                     @foreach ($accounts as $account)
-                                        <option value="{{ $account->id }}">{{ $account->nama }}</option>
+                                        <option {{ $cash_in->account->id == $account->id ? 'selected' : '' }} value="{{ $account->id }}">{{ $account->nama }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="form-group col-6">
                                 <label for="no_cek">No Cek</label>
-                                <input type="text" class="form-control" readonly value="{{ $no_cek }}" name="no_cek" id="no_cek"
+                                <input type="text" class="form-control" readonly value="{{ $cash_in->no_cek }}" name="no_cek" id="no_cek"
                                     placeholder="No Cek">
                                 <span class="text-danger" id="no_cekError"></span>
                             </div>
@@ -28,10 +29,10 @@
                         <div class="row">
                             <div class="form-group col-6">
                                 <label>Dari</label>
-                                <select name="user_id" id="user_id" class="form-control select2" style="width: 100%;">
+                                <select name="student_id" id="student_id" class="form-control select2" style="width: 100%;">
                                     <option selected="selected" disabled>-- pilih --</option>
-                                    @foreach ($users as $user)
-                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                    @foreach ($students as $student)
+                                        <option {{ $cash_in->student->id == $student->id ? 'selected' : '' }} value="{{ $student->id }}">{{ $student->nama }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -40,7 +41,7 @@
                                 <label>Tanggal</label>
                                 <div class="input-group date" id="tanggal" data-target-input="nearest">
                                     <input type="text" required name="tanggal" class="form-control datetimepicker-input"
-                                        data-target="#tanggal" value="">
+                                        data-target="#tanggal" value="{{ \Carbon\Carbon::make($cash_in->tanggal)->format('d/m/Y') }}">
                                     <div class="input-group-append" data-target="#tanggal" data-toggle="datetimepicker">
                                         <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                     </div>
@@ -50,13 +51,13 @@
                         <div class="row">
                             <div class="form-group col-6">
                                 <label for="sebesar">Sebesar</label>
-                                <input type="text" class="form-control" readonly name="sebesar" id="sebesar"
+                                <input type="text" class="form-control" readonly name="sebesar" value="{{ numberFormat($cash_in->sebesar, 'Rp.') }}" id="sebesar"
                                     placeholder="sebesar">
                                 <span class="text-danger" id="sebesarError"></span>
                             </div>
                             <div class="form-group col-6">
                                 <label for="memo">Memo</label>
-                                <input type="text" class="form-control" name="memo" id="memo" placeholder="memo">
+                                <input type="text" class="form-control" name="memo" id="memo" value="{{ $cash_in->memo }}" placeholder="memo">
                                 <span class="text-danger" id="memoError"></span>
                             </div>
                         </div>
@@ -72,7 +73,38 @@
                                 </tr>
                             </thead>
                             <tbody id="list">
-
+                                @foreach ($cash_in->cashInDetails as $cashInDetail)
+                                    <tr>
+                                        <input type="hidden" name="cash_in_detail_id[]" value="{{ $cashInDetail->id }}">
+                                        <td>
+                                            <div class="form-group">
+                                                <input type="text" readonly class="form-control" id="kode" value="{{ $cashInDetail->account->kode }}" placeholder="kode">
+                                                <span class="text-danger" id="kodeError"></span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <select name="account_id[]" id="account_id" class="form-control select2"
+                                                    style="width: 100%;">
+                                                    <option selected="selected" disabled>-- pilih --</option>
+                                                    @foreach ($accounts as $account)
+                                                        <option {{ $cashInDetail->account->id == $account->id ? 'selected' : '' }} value="{{ Crypt::encrypt($account->id) }}">{{ $account->nama }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" value="{{ numberFormat($cashInDetail->nominal, 'Rp.') }}" name="nominal[]" id="nominal"
+                                                    placeholder="nominal">
+                                                <span class="text-danger" id="nominalError"></span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-danger remove">hapus</button>
+                                        </td>
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -236,9 +268,10 @@
 
 
         $('body').on('click', '.btn-save', function(event) {
+            var cash_in_id = $("#cash_in_id").val();
             var account_id_single = $("#account_id_single").val();
             var no_cek = $("#no_cek").val();
-            var user_id = $("#user_id").val();
+            var student_id = $("#student_id").val();
             var tanggal = $('input[name="tanggal"]').val();
             var sebesar = $("#sebesar").val();
             var memo = $("#memo").val();
@@ -248,23 +281,26 @@
             var account_ids = $("select[name='account_id[]']").map(function(){
                 return $(this).val();
             }).get();
-            console.log(account_ids);
+            var cash_in_detail_ids = $("input[name='cash_in_detail_id[]']").map(function(){
+                return $(this).val();
+            }).get();
             $("#btn-save").html('Please Wait...');
             $("#btn-save").attr("disabled", true);
 
             // ajax
             $.ajax({
-                type: "POST",
-                url: "{{ route('api.cash-ins.store') }}",
+                type: "PUT",
+                url: "{{ url('/') }}/api/cash-ins/"+cash_in_id+"/update",
                 data: {
                     account_id: account_id_single,
-                    user_id: user_id,
+                    student_id: student_id,
                     no_cek: no_cek,
                     tanggal: tanggal,
                     sebesar: sebesar,
                     memo: memo,
                     nominals: nominals,
-                    account_ids: account_ids
+                    account_ids: account_ids,
+                    cash_in_detail_ids: cash_in_detail_ids
                 },
                 dataType: 'json',
                 success: function(res) {

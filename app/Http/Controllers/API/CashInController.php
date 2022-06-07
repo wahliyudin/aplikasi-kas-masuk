@@ -7,6 +7,7 @@ use App\Models\CashIn;
 use App\Models\CashInDetail;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Yajra\DataTables\Facades\DataTables;
@@ -20,11 +21,11 @@ class CashInController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $actionBtn = '<div class="d-flex align-item-center"> <a href="javascript:void(0)"
-                            class="edit btn btn-success btn-sm mr-2"
-        data-id="' . Crypt::encrypt($row->id) . '">Ubah</a> <a href="javascript:void(0)"
+                    $actionBtn = '<div class="d-flex align-item-center"> <a
+                            href="' . route('admin.cash-ins.edit', Crypt::encrypt($row->id)) . '"
+                            class="btn btn-success btn-sm mr-2">Ubah</a> <a href="javascript:void(0)"
         class="delete btn btn-danger btn-sm mr-2" id="' . Crypt::encrypt($row->id) . '">Hapus</a> <a
-            href="'.route('admin.cash-ins.show', Crypt::encrypt($row->id)).'" class="btn btn-secondary btn-sm">Detail</a></div>';
+            href="' . route('admin.cash-ins.show', Crypt::encrypt($row->id)) . '" class="btn btn-secondary btn-sm">Detail</a></div>';
                     return $actionBtn;
                 })
                 ->addColumn('sebesar', function ($row) {
@@ -46,13 +47,58 @@ class CashInController extends Controller
                 'sebesar' => replaceRupiah($request->sebesar),
                 'memo' => $request->memo
             ]);
-            for ($i=0; $i < count($request->nominals); $i++) {
+            for ($i = 0; $i < count($request->nominals); $i++) {
                 $account_id = Crypt::decrypt($request->account_ids[$i]);
                 CashInDetail::create([
                     'cash_in_id' => $cashin->id,
                     'account_id' => $account_id,
                     'nominal' => replaceRupiah($request->nominals[$i])
                 ]);
+            }
+            return response()->json([
+                'status' => 'success',
+                'message' => isset($request->id) ? 'Ubah Data Kas Masuk' : 'Menambahkan data Kas Masuk',
+            ]);
+        } catch (\Exception $th) {
+            $th->getCode() == 400 ? $code = 400 : $code = 500;
+            return response()->json([
+                'status' => 'error',
+                'message' => $th->getMessage()
+            ], $code);
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (DecryptException $e) {
+
+        }
+        try {
+            $cashin = CashIn::find($id)->update([
+                'account_id' => $request->account_id,
+                'student_id' => $request->student_id,
+                'no_cek' => $request->no_cek,
+                'tanggal' => Carbon::make($request->tanggal)->format('Y-m-d'),
+                'sebesar' => replaceRupiah($request->sebesar),
+                'memo' => $request->memo
+            ]);
+            for ($i = 0; $i < count($request->nominals); $i++) {
+                $account_id = Crypt::decrypt($request->account_ids[$i]);
+                if (isset($request->cash_in_detail_ids[$i])) {
+                    CashInDetail::find($request->cash_in_detail_ids[$i])->update([
+                        'cash_in_id' => $id,
+                        'account_id' => $account_id,
+                        'nominal' => replaceRupiah($request->nominals[$i])
+                    ]);
+                } else {
+                    CashInDetail::create([
+                        'cash_in_id' => $id,
+                        'account_id' => $account_id,
+                        'nominal' => replaceRupiah($request->nominals[$i])
+                    ]);
+                }
             }
             return response()->json([
                 'status' => 'success',

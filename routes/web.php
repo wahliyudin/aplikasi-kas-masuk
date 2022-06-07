@@ -43,6 +43,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::prefix('Kas-masuk')->name('cash-ins.')->group(function () {
         Route::get('/', [CashInController::class, 'index'])->name('index');
         Route::get('create', [CashInController::class, 'create'])->name('create');
+        Route::get('{id}/edit', [CashInController::class, 'edit'])->name('edit');
         Route::get('{id}/show', [CashInController::class, 'show'])->name('show');
         Route::get('exports/{id}/bukti-kas-masuk', [CashInController::class,
         'buktiKasMasuk'])->name('exports.bukti-kas-masuk');

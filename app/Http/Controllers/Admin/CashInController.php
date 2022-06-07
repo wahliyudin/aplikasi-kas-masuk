@@ -63,6 +63,26 @@ class CashInController extends Controller
         ]);
     }
 
+    public function edit($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (DecryptException $e) {
+        }
+        return view('admin.cash-in.edit', [
+            'breadcrumbs' => [
+                'title' => 'Edit Kas Masuk',
+                'path' => [
+                    'Kas Masuk' => route('admin.cash-ins.index'),
+                    'Edit Kas Masuk' => 0
+                ]
+            ],
+            'cash_in' => CashIn::with('account', 'student', 'cashInDetails', 'cashInDetails.account')->find($id),
+            'accounts' => Account::latest()->get(),
+            'students' => Student::latest()->get()
+        ]);
+    }
+
     public function buktiKasMasuk($id)
     {
         try {

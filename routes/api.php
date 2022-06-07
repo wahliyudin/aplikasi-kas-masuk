@@ -41,6 +41,7 @@ Route::name('api.')->group(function () {
         Route::post('/', [CashInController::class, 'index'])->name('index');
         Route::post('store', [CashInController::class, 'store'])->name('store');
         Route::get('{id}/edit', [CashInController::class, 'edit'])->name('edit');
+        Route::put('{id}/update', [CashInController::class, 'update'])->name('update');
         Route::delete('{id}/destroy', [CashInController::class, 'destroy'])->name('destroy');
     });
     Route::prefix('students')->name('students.')->group(function () {
