@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\Admin\AccountController;
 use App\Http\Controllers\Admin\AccountTypeController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\HomeController;
+use App\Models\Account;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return url('/');
+    return Account::with('accountType')->oldest()->get();
     return redirect()->route('login');
 });
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -25,6 +27,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::prefix('master-data')->group(function () {
         Route::prefix('jenis-akun')->name('account-types.')->group(function () {
             Route::get('/', [AccountTypeController::class, 'index'])->name('index');
+        });
+        Route::prefix('data-akun')->name('accounts.')->group(function () {
+            Route::get('/', [AccountController::class, 'index'])->name('index');
         });
     });
 });

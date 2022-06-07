@@ -47,6 +47,13 @@
                                 <p>Jenis Akun</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.accounts.index') }}"
+                                class="nav-link {{ request()->routeIs('admin.accounts.index') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Data Akun</p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 {{-- <li class="nav-item">

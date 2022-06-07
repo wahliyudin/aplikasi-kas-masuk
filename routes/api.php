@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\AccountController;
 use App\Http\Controllers\API\AccountTypeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -25,5 +26,11 @@ Route::name('api.')->group(function () {
         Route::post('update-or-create', [AccountTypeController::class, 'updateOrCreate'])->name('update-or-create');
         Route::get('{id}/edit', [AccountTypeController::class, 'edit'])->name('edit');
         Route::delete('{id}/destroy', [AccountTypeController::class, 'destroy'])->name('destroy');
+    });
+    Route::prefix('accounts')->name('accounts.')->group(function () {
+        Route::post('/', [AccountController::class, 'index'])->name('index');
+        Route::post('update-or-create', [AccountController::class, 'updateOrCreate'])->name('update-or-create');
+        Route::get('{id}/edit', [AccountController::class, 'edit'])->name('edit');
+        Route::delete('{id}/destroy', [AccountController::class, 'destroy'])->name('destroy');
     });
 });
