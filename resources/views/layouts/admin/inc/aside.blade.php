@@ -31,7 +31,7 @@
                         </p>
                     </a>
                 </li>
-                {{-- <li class="nav-item {{ request()->is('admin/master-data/*') ? 'menu-open' : '' }}">
+                <li class="nav-item {{ request()->is('admin/master-data/*') ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link {{ request()->is('admin/master-data/*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-server"></i>
                         <p>
@@ -41,21 +41,14 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('admin.positions.index') }}"
-                                class="nav-link {{ request()->routeIs('admin.positions.index') ? 'active' : '' }}">
+                            <a href="{{ route('admin.account-types.index') }}"
+                                class="nav-link {{ request()->routeIs('admin.account-types.index') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>Jabatan</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.teachers.index') }}"
-                                class="nav-link {{ request()->routeIs('admin.teachers.index') ? 'active' : '' }}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Data Guru</p>
+                                <p>Jenis Akun</p>
                             </a>
                         </li>
                     </ul>
-                </li> --}}
+                </li>
                 {{-- <li class="nav-item">
                     <a href="{{ route('admin.incoming-product.index') }}"
                         class="nav-link {{ request()->routeIs('admin.incoming-product.index') ? 'active' : '' }}">
