@@ -6,26 +6,20 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Kas Masuk</h3>
-                        {{-- <button class="btn btn-sm btn-primary float-right" id="addNewCashIn"><i class="fas fa-plus mr-2"></i>
+                        <h3 class="card-title">Data Siswa</h3>
+                        <button class="btn btn-sm btn-primary float-right" id="addNewStudent"><i class="fas fa-plus mr-2"></i>
                             Tambah
-                            Data</button> --}}
-                        <a href="{{ route('admin.cash-ins.create') }}" class="btn btn-sm btn-primary float-right"><i
-                                class="fas fa-plus mr-2"></i>
-                            Tambah
-                            Data</a>
+                            Data</button>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
-                        <table id="cash_in" class="table table-bordered table-striped">
+                        <table id="students" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>No Cek</th>
-                                    <th>Nama Siswa</th>
-                                    <th>Tanggal</th>
-                                    <th>Keterangan</th>
-                                    <th>Sebesar</th>
+                                    <th>NIS</th>
+                                    <th>Nama</th>
+                                    <th>No HP</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -38,15 +32,15 @@
             </div>
         </div>
     </div>
+    @include('admin.student.modal')
 @endsection
 @include('layouts.inc.datatables')
 @include('layouts.inc.toastr')
-
 @push('script')
     <script type="text/javascript">
         var table;
         setTimeout(function() {
-            tablecashin();
+            tablestudents();
         }, 500);
         var ajaxError = function(jqXHR, xhr, textStatus, errorThrow, exception) {
             if (jqXHR.status === 0) {
@@ -74,14 +68,15 @@
             }
         });
 
-        function tablecashin() {
-            $('#cash_in').dataTable().fnDestroy();
-            table = $('#cash_in').DataTable({
+        // function to retrieve DataTable server side
+        function tablestudents() {
+            $('#students').dataTable().fnDestroy();
+            table = $('#students').DataTable({
                 responsive: true,
                 serverSide: true,
                 processing: true,
                 ajax: {
-                    url: "{{ route('api.cash-ins.index') }}",
+                    url: "{{ route('api.students.index') }}",
                     type: "POST",
                     data: {
                         "_token": "{{ csrf_token() }}"
@@ -92,24 +87,16 @@
                         name: 'DT_RowIndex'
                     },
                     {
-                        data: 'no_cek',
-                        name: 'no_cek'
+                        data: 'nis',
+                        name: 'nis'
                     },
                     {
-                        data: 'student.nama',
-                        name: 'student.nama'
+                        data: 'nama',
+                        name: 'nama'
                     },
                     {
-                        data: 'tanggal',
-                        name: 'tanggal'
-                    },
-                    {
-                        data: 'memo',
-                        name: 'memo'
-                    },
-                    {
-                        data: 'sebesar',
-                        name: 'sebesar'
+                        data: 'no_hp',
+                        name: 'no_hp'
                     },
                     {
                         data: 'action',
@@ -126,11 +113,11 @@
             });
         }
 
-        $('#addNewCashIn').click(function() {
-            $('#addEditCashInForm').trigger("reset");
+        $('#addNewStudent').click(function() {
+            $('#addEditStudentForm').trigger("reset");
             $("#id").val('');
-            $('.modal-title').html("Tambah Kas Masuk");
-            $('#CashIn-modal').modal('show');
+            $('#ajaxStudentModel').html("Add Student");
+            $('#Student-modal').modal('show');
         });
 
         $('body').on('click', '.edit', function() {
@@ -139,34 +126,58 @@
             // ajax
             $.ajax({
                 type: "GET",
-                url: "{{ url('/') }}/api/cash-ins/" + id + "/edit",
+                url: "{{ url('/') }}/api/students/" + id + "/edit",
                 dataType: 'json',
                 success: function(res) {
-                    $('.modal-title').html("Edit Kas Masuk");
-                    $('#CashIn-modal').modal('show');
+                    $('#ajaxBookModel').html("Edit Book");
+                    $('#Student-modal').modal('show');
                     $('#id').val(res.data.id);
-                    $("#account_id").val(res.data.account_id).trigger('change');;
-                    $("#student_id").val(res.data.student_id).trigger('change');;
-                    $("#no_cek").val(res.data.no_cek);
-                    $("#tanggal").val(res.data.tanggal).trigger('change.datetimepicker');
-                    $("#sebesar").val(formatRupiah(String(res.data.sebesar), 'Rp.'));
+                    $('#nama').val(res.data.nama);
                 },
                 error: ajaxError,
             });
         });
 
+        $('body').on('click', '#btn-save', function(event) {
+            var id = $("#id").val();
+            var nama = $("#nama").val();
+            var nis = $("#nis").val();
+            var no_hp = $("#no_hp").val();
+            $("#btn-save").html('Please Wait...');
+            $("#btn-save").attr("disabled", true);
 
+            // ajax
+            $.ajax({
+                type: "POST",
+                url: "{{ route('api.students.update-or-create') }}",
+                data: {
+                    id: id,
+                    nama: nama,
+                    nis: nis,
+                    no_hp: no_hp
+                },
+                dataType: 'json',
+                success: function(res) {
+                    table.ajax.reload();
+                    $("#btn-save").html('Submit');
+                    $("#btn-save").attr("disabled", false);
+                    toastr.success(res.message, 'Berhasil!');
+                    $('#Student-modal').modal('hide');
+                },
+                error: ajaxError,
+            });
+        });
 
         // // delete
         $('body').on('click', '.delete', function(e) {
             e.preventDefault();
-            deletecash_in($(this).attr('id'))
+            deletestudents($(this).attr('id'))
         });
 
-        function deletecash_in(id) {
+        function deletestudents(id) {
             Swal.fire({
                 title: 'Apakah Anda Yakin?',
-                text: "Kas Masuk akan dihapus secara permanen!",
+                text: "Data Siswa akan dihapus secara permanen!",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -175,7 +186,7 @@
             }).then((result) => {
                 if (result.value) {
                     $.ajax({
-                        url: "{{ url('/') }}/api/cash-ins/" + id + "/destroy",
+                        url: "{{ url('/') }}/api/students/" + id + "/destroy",
                         type: 'DELETE',
                         success: function(resp) {
                             toastr.success(resp.message, 'Berhasil!');

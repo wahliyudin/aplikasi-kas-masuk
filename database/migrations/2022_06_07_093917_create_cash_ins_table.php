@@ -16,14 +16,14 @@ class CreateCashInsTable extends Migration
         Schema::create('cash_ins', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('account_id');
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('student_id');
             $table->string('no_cek');
             $table->date('tanggal');
             $table->bigInteger('sebesar');
             $table->string('memo');
 
             $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
             $table->timestamps();
         });
     }

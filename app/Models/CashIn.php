@@ -11,7 +11,7 @@ class CashIn extends Model
 
     protected $fillable = [
         'account_id',
-        'user_id',
+        'student_id',
         'no_cek',
         'tanggal',
         'sebesar',
@@ -23,9 +23,9 @@ class CashIn extends Model
         return $this->belongsTo(Account::class);
     }
 
-    public function user()
+    public function student()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Student::class);
     }
 
     public function cashInDetails()

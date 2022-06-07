@@ -54,6 +54,13 @@
                                 <p>Data Akun</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.students.index') }}"
+                                class="nav-link {{ request()->routeIs('admin.students.index') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Data SIswa</p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 <li class="nav-item">
@@ -62,6 +69,15 @@
                         <i class="nav-icon fas fa-hand-holding-usd"></i>
                         <p>
                             Kas Masuk
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.reports.index') }}"
+                        class="nav-link {{ request()->routeIs('admin.reports.index') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-file-contract"></i>
+                        <p>
+                            Laporan
                         </p>
                     </a>
                 </li>

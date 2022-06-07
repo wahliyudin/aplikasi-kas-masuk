@@ -24,7 +24,7 @@
                         <div class="row">
                             <div class="form-group col-6">
                                 <label>Dari</label>
-                                <input type="text" class="form-control" value="{{ $cash_in->user->name }}" readonly>
+                                <input type="text" class="form-control" value="{{ $cash_in->student->nama }}" readonly>
                             </div>
 
                             <div class="form-group col-6">

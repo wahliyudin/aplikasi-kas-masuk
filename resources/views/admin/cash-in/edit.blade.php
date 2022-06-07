@@ -28,10 +28,10 @@
                         <div class="row">
                             <div class="form-group col-6">
                                 <label>Dari</label>
-                                <select name="student_id" id="student_id" class="form-control select2" style="width: 100%;">
+                                <select name="user_id" id="user_id" class="form-control select2" style="width: 100%;">
                                     <option selected="selected" disabled>-- pilih --</option>
-                                    @foreach ($students as $student)
-                                        <option value="{{ $student->id }}">{{ $student->nama }}</option>
+                                    @foreach ($users as $user)
+                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -238,7 +238,7 @@
         $('body').on('click', '.btn-save', function(event) {
             var account_id_single = $("#account_id_single").val();
             var no_cek = $("#no_cek").val();
-            var student_id = $("#student_id").val();
+            var user_id = $("#user_id").val();
             var tanggal = $('input[name="tanggal"]').val();
             var sebesar = $("#sebesar").val();
             var memo = $("#memo").val();
@@ -258,7 +258,7 @@
                 url: "{{ route('api.cash-ins.store') }}",
                 data: {
                     account_id: account_id_single,
-                    student_id: student_id,
+                    user_id: user_id,
                     no_cek: no_cek,
                     tanggal: tanggal,
                     sebesar: sebesar,

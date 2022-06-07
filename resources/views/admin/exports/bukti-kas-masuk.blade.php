@@ -51,7 +51,7 @@
                             <tr>
                                 <td>Telah Diterima Dari</td>
                                 <td style="padding: 0 10px;">:</td>
-                                <td>{{ $cash_in->user->name }}</td>
+                                <td>{{ $cash_in->student->nama }}</td>
                             </tr>
                             <tr>
                                 <td>Keterangan</td>

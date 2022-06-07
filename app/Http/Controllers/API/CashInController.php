@@ -16,7 +16,7 @@ class CashInController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = CashIn::with('account', 'user')->latest()->get();
+            $data = CashIn::with('account', 'student')->latest()->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
@@ -40,7 +40,7 @@ class CashInController extends Controller
         try {
             $cashin = CashIn::create([
                 'account_id' => $request->account_id,
-                'user_id' => $request->user_id,
+                'student_id' => $request->student_id,
                 'no_cek' => $request->no_cek,
                 'tanggal' => Carbon::make($request->tanggal)->format('Y-m-d'),
                 'sebesar' => replaceRupiah($request->sebesar),
@@ -78,7 +78,7 @@ class CashInController extends Controller
             $data = [
                 'id' => $cash_in->id,
                 'account_id' => $cash_in->account_id,
-                'user_id' => $cash_in->user_id,
+                'student_id' => $cash_in->student_id,
                 'no_cek' => $cash_in->no_cek,
                 'tanggal' => $cash_in->tanggal,
                 'sebesar' => $cash_in->sebesar,

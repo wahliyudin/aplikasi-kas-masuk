@@ -4,6 +4,8 @@ use App\Http\Controllers\Admin\AccountController;
 use App\Http\Controllers\Admin\AccountTypeController;
 use App\Http\Controllers\Admin\CashInController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\HomeController;
 use App\Models\Account;
 use App\Models\CashIn;
@@ -33,6 +35,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         Route::prefix('data-akun')->name('accounts.')->group(function () {
             Route::get('/', [AccountController::class, 'index'])->name('index');
         });
+        Route::prefix('data-siswa')->name('students.')->group(function () {
+            Route::get('/', [StudentController::class, 'index'])->name('index');
+        });
     });
 
     Route::prefix('Kas-masuk')->name('cash-ins.')->group(function () {
@@ -41,6 +46,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         Route::get('{id}/show', [CashInController::class, 'show'])->name('show');
         Route::get('exports/{id}/bukti-kas-masuk', [CashInController::class,
         'buktiKasMasuk'])->name('exports.bukti-kas-masuk');
+    });
+
+    Route::prefix('laporan')->name('reports.')->group(function () {
+        Route::get('/', [ReportController::class, 'index'])->name('index');
     });
 });
 
