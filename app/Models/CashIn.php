@@ -27,4 +27,9 @@ class CashIn extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function cashInDetails()
+    {
+        return $this->hasMany(CashInDetail::class);
+    }
 }

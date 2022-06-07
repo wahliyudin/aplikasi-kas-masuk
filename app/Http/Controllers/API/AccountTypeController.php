@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\Account;
 use App\Models\AccountType;
 use Exception;
 use Illuminate\Http\Request;
@@ -91,6 +92,31 @@ class AccountTypeController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Menghapus data Jenis Akun',
+            ]);
+        } catch (\Exception $th) {
+            $th->getCode() == 400 ? $code = 400 : $code = 500;
+            return response()->json([
+                'status' => 'error',
+                'message' => $th->getMessage()
+            ], $code);
+        }
+    }
+
+    public function getById($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+            $account = Account::find($id);
+            if (!$account) {
+                throw new Exception('Data akun tidak ditemukan!', 400);
+            }
+            $data = [
+                'id' => $account->id,
+                'kode' => $account->kode
+            ];
+            return response()->json([
+                'status' => 'success',
+                'data' => $data,
             ]);
         } catch (\Exception $th) {
             $th->getCode() == 400 ? $code = 400 : $code = 500;

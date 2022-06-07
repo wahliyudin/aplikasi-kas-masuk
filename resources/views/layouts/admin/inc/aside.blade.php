@@ -56,16 +56,16 @@
                         </li>
                     </ul>
                 </li>
-                {{-- <li class="nav-item">
-                    <a href="{{ route('admin.incoming-product.index') }}"
-                        class="nav-link {{ request()->routeIs('admin.incoming-product.index') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-file-download"></i>
+                <li class="nav-item">
+                    <a href="{{ route('admin.cash-ins.index') }}"
+                        class="nav-link {{ request()->routeIs('admin.cash-ins.index') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-hand-holding-usd"></i>
                         <p>
-                            Barang Masuk
+                            Kas Masuk
                         </p>
                     </a>
                 </li>
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a href="{{ route('admin.product-out.index') }}"
                         class="nav-link {{ request()->routeIs('admin.product-out.index') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-file-upload"></i>

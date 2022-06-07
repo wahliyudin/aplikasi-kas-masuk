@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\Admin\AccountController;
 use App\Http\Controllers\Admin\AccountTypeController;
+use App\Http\Controllers\Admin\CashInController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Models\Account;
+use App\Models\CashIn;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,7 +21,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return Account::with('accountType')->oldest()->get();
+    return view('admin.cash-in.create');
     return redirect()->route('login');
 });
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -31,6 +33,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         Route::prefix('data-akun')->name('accounts.')->group(function () {
             Route::get('/', [AccountController::class, 'index'])->name('index');
         });
+    });
+
+    Route::prefix('Kas-masuk')->name('cash-ins.')->group(function () {
+        Route::get('/', [CashInController::class, 'index'])->name('index');
+        Route::get('create', [CashInController::class, 'create'])->name('create');
+        Route::get('{id}/show', [CashInController::class, 'show'])->name('show');
     });
 });
 

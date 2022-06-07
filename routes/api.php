@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\AccountController;
 use App\Http\Controllers\API\AccountTypeController;
+use App\Http\Controllers\API\CashInController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -32,5 +33,13 @@ Route::name('api.')->group(function () {
         Route::post('update-or-create', [AccountController::class, 'updateOrCreate'])->name('update-or-create');
         Route::get('{id}/edit', [AccountController::class, 'edit'])->name('edit');
         Route::delete('{id}/destroy', [AccountController::class, 'destroy'])->name('destroy');
+
+        Route::get('{id}/by-id', [AccountTypeController::class, 'getById']);
+    });
+    Route::prefix('cash-ins')->name('cash-ins.')->group(function () {
+        Route::post('/', [CashInController::class, 'index'])->name('index');
+        Route::post('store', [CashInController::class, 'store'])->name('store');
+        Route::get('{id}/edit', [CashInController::class, 'edit'])->name('edit');
+        Route::delete('{id}/destroy', [CashInController::class, 'destroy'])->name('destroy');
     });
 });
