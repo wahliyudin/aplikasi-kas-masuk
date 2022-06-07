@@ -3,7 +3,7 @@
 @section('content')
     <div class="container-fluid">
         <!-- Small boxes (Stat box) -->
-        <div class="row">
+        <div class="row justify-content-center">
             <div class="col-lg-4 col-6">
                 <!-- small box -->
                 <div class="small-box bg-info">
@@ -23,14 +23,15 @@
                 <!-- small box -->
                 <div class="small-box bg-primary">
                     <div class="inner">
-                        <h3>100</h3>
+                        <h3>{{ $total_siswa }}</h3>
 
-                        <p>Jumlah Jabatan</p>
+                        <p>Total Siswa</p>
                     </div>
                     <div class="icon">
-                        <i class="fas fa-tags"></i>
+                        <i class="fas fa-graduation-cap"></i>
                     </div>
-                    <a href="" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                    <a href="{{ route('admin.students.index') }}" class="small-box-footer">More info <i
+                            class="fas fa-arrow-circle-right"></i></a>
                 </div>
             </div>
         </div>

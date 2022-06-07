@@ -50,6 +50,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::prefix('laporan')->name('reports.')->group(function () {
         Route::get('/', [ReportController::class, 'index'])->name('index');
+        Route::get('kas-masuk/export', [ReportController::class, 'kasMasukExport'])->name('kas-masuk.export');
     });
 });
 
