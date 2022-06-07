@@ -39,6 +39,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         Route::get('/', [CashInController::class, 'index'])->name('index');
         Route::get('create', [CashInController::class, 'create'])->name('create');
         Route::get('{id}/show', [CashInController::class, 'show'])->name('show');
+        Route::get('exports/{id}/bukti-kas-masuk', [CashInController::class,
+        'buktiKasMasuk'])->name('exports.bukti-kas-masuk');
     });
 });
 

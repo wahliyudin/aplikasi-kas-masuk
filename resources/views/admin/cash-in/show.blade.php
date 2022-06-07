@@ -5,6 +5,10 @@
         <div class="row">
             <div class="col-12">
                 <div class="card">
+                    <div class="card-header">
+                        <a href="{{ route('admin.cash-ins.exports.bukti-kas-masuk', Crypt::encrypt($cash_in->id)) }}"
+                            target="_blank" class="btn btn-primary float-right"><i class="fas fa-print mr-2"></i> Cetak</a>
+                    </div>
                     <!-- /.card-header -->
                     <div class="card-body">
                         <div class="row">

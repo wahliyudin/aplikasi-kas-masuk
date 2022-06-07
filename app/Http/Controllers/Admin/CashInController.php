@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Account;
 use App\Models\CashIn;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -60,5 +61,17 @@ class CashInController extends Controller
             ],
             'cash_in' => CashIn::with('account', 'user', 'cashInDetails', 'cashInDetails.account')->find($id)
         ]);
+    }
+
+    public function buktiKasMasuk($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (DecryptException $e) {
+        }
+        $cash_in = CashIn::with('account', 'user', 'cashInDetails', 'cashInDetails.account')->find($id);
+
+        $pdf = Pdf::loadView('admin.exports.bukti-kas-masuk', compact('cash_in'));
+        return $pdf->setPaper('A4')->stream();
     }
 }
