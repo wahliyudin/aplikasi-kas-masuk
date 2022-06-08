@@ -180,8 +180,12 @@
             console.log($(event.target).parent().parent().parent().attr('id'));
         });
         $('body').on('click', '.remove', function(event) {
-            $('#sebesar').val(formatRupiah(String(replaceFormatRupiah($('#sebesar').val()) - parseInt(replaceFormatRupiah($($(event.target).parent().parent().find('#nominal')).val()))), 'Rp.'));
-            $(event.target).parent().parent().remove();
+            if ($($(event.target).parent().parent().find('#nominal')).val() === '') {
+                $(event.target).parent().parent().remove();
+            } else {
+                $('#sebesar').val(formatRupiah(String(replaceFormatRupiah($('#sebesar').val()) - parseInt(replaceFormatRupiah($($(event.target).parent().parent().find('#nominal')).val()))), 'Rp.'));
+                $(event.target).parent().parent().remove();
+            }
         });
 
         $('body').on('keyup', '#nominal', function(event) {

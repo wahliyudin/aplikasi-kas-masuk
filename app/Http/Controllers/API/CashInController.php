@@ -76,7 +76,7 @@ class CashInController extends Controller
 
         }
         try {
-            $cashin = CashIn::find($id)->update([
+            CashIn::find($id)->update([
                 'account_id' => $request->account_id,
                 'student_id' => $request->student_id,
                 'no_cek' => $request->no_cek,
@@ -87,7 +87,12 @@ class CashInController extends Controller
             for ($i = 0; $i < count($request->nominals); $i++) {
                 $account_id = Crypt::decrypt($request->account_ids[$i]);
                 if (isset($request->cash_in_detail_ids[$i])) {
-                    CashInDetail::find($request->cash_in_detail_ids[$i])->update([
+                    try {
+                        $detail_id = Crypt::decrypt($request->cash_in_detail_ids[$i]);
+                    } catch (DecryptException $e) {
+
+                    }
+                    CashInDetail::find($detail_id)->update([
                         'cash_in_id' => $id,
                         'account_id' => $account_id,
                         'nominal' => replaceRupiah($request->nominals[$i])
@@ -157,6 +162,31 @@ class CashInController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Menghapus data Kas Masuk',
+            ]);
+        } catch (\Exception $th) {
+            $th->getCode() == 400 ? $code = 400 : $code = 500;
+            return response()->json([
+                'status' => 'error',
+                'message' => $th->getMessage()
+            ], $code);
+        }
+    }
+
+    public function destroyDetail($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+            $cash_in_detail = CashInDetail::find($id);
+
+            if (!$cash_in_detail) {
+                throw new Exception('Data detail Kas Masuk tidak ditemukan!', 400);
+            }
+            $sebesar = $cash_in_detail->cashIn->sebesar;
+            $cash_in_detail->cashIn->update(['sebesar' => $sebesar - $cash_in_detail->nominal]);
+            $cash_in_detail->delete();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Menghapus data detail Kas Masuk',
             ]);
         } catch (\Exception $th) {
             $th->getCode() == 400 ? $code = 400 : $code = 500;

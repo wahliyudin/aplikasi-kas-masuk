@@ -75,7 +75,7 @@
                             <tbody id="list">
                                 @foreach ($cash_in->cashInDetails as $cashInDetail)
                                     <tr>
-                                        <input type="hidden" name="cash_in_detail_id[]" value="{{ $cashInDetail->id }}">
+                                        <input type="hidden" name="cash_in_detail_id[]" id="cash_in_detail_id" value="{{ Crypt::encrypt($cashInDetail->id) }}">
                                         <td>
                                             <div class="form-group">
                                                 <input type="text" readonly class="form-control" id="kode" value="{{ $cashInDetail->account->kode }}" placeholder="kode">
@@ -212,8 +212,37 @@
             console.log($(event.target).parent().parent().parent().attr('id'));
         });
         $('body').on('click', '.remove', function(event) {
-            $('#sebesar').val(formatRupiah(String(replaceFormatRupiah($('#sebesar').val()) - parseInt(replaceFormatRupiah($($(event.target).parent().parent().find('#nominal')).val()))), 'Rp.'));
-            $(event.target).parent().parent().remove();
+            if (typeof $(event.target).parent().parent().find('#cash_in_detail_id').val() === 'undefined') {
+                if ($($(event.target).parent().parent().find('#nominal')).val() === '') {
+                    $(event.target).parent().parent().remove();
+                } else {
+                    $('#sebesar').val(formatRupiah(String(replaceFormatRupiah($('#sebesar').val()) - parseInt(replaceFormatRupiah($($(event.target).parent().parent().find('#nominal')).val()))), 'Rp.'));
+                    $(event.target).parent().parent().remove();
+                }
+            } else {
+                Swal.fire({
+                    title: 'Apakah Anda Yakin?',
+                    text: "Record akan dihapus secara permanen!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Hapus Sekarang!'
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajax({
+                            url: "{{ url('/') }}/api/cash-in-details/" + $(event.target).parent().parent().find('#cash_in_detail_id').val() + "/destroy",
+                            type: 'DELETE',
+                            success: function(resp) {
+
+                                toastr.success(resp.message, 'Berhasil!');
+                                location.reload();
+                            },
+                            error: ajaxError,
+                        });
+                    }
+                })
+            }
         });
 
         $('body').on('keyup', '#nominal', function(event) {
